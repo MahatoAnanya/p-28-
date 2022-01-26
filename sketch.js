@@ -1,71 +1,62 @@
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
-const Body = Matter.Body;
+const Constraint = Matter.Constraint;
 
-var ball,groundObj,leftSide,rightSide;
-var world;
-var radius = 70;
-
-function preload(){
-//find the bug in the below code
-	dustbinImg = loadImage("dustbin.png");
-	paperImg = loadImage("paper.png");
-
-}
+var engine, world;
+var canvas;
+var palyer, playerBase;
+var computer, computerBase;
 
 
 function setup() {
-	createCanvas(1600, 700);
-	rectMode(CENTER);
+  canvas = createCanvas(windowWidth, windowHeight);
 
-	engine = Engine.create();
-	world = engine.world;
+  engine = Engine.create();
+  world = engine.world;
 
-	var ball_options={
-		isStatic:false,
-		restitution:0.3,
-		density:0.4
-	}
+  playerBase = new PlayerBase(300, random(450, height - 300), 180, 150);
+//create a player object from the Player class.
+  player = new Player(
+    width - 800,
+    playerBase.body.position.y - 150,
+    50,
+    180
+  )
+  computerBase = new ComputerBase(
+    width - 300,
+    random(450, height - 300),
+    180,
+    150
+  );
+  computer = new Computer(
+    width - 280,
+    computerBase.body.position.y - 153,
+    50,
+    180
+  );
 
-	ball = Bodies.circle(260,100,radius/2.6,ball_options);
-	World.add(world,ball);
-
-	ground=new Ground(width/2,670,width,20);
-	leftSide = new Ground(1100,600,10,120);
-	rightSide = new Ground(1270,600,10,120);
-	bottomSide = new Ground(1185,650,150,20);
-
-	Engine.run(engine);
   
 }
 
-
 function draw() {
-	background(200);
-	rectMode(CENTER);
+  background(189);
 
+  Engine.update(engine);
 
-	ground.display();
-	leftSide.display();  
-	rightSide.display();
-	bottomSide.display();
+  // Title
+  fill("#FFFF");
+  textAlign("center");
+  textSize(40);
+  text("EPIC ARCHERY", width / 2, 100);
 
-	
-	imageMode(CENTER);
-		//use image() command to add paper image to the ball
-image(paperImg,ball.position.x,ball.position.y,radius,radius);
+ 
+  playerBase.display();
+//call the display() function for the player object.
+  player.display()
 
-	// use image() command to add dustbin image in the canvas.
-image(dustbinImg,1185, 570, 200,200);
-	
+  computerBase.display();
+  computer.display();
+  
 
-}
-
-function keyPressed() {
-  	if (keyCode === UP_ARROW) {
-
-		Matter.Body.applyForce(ball,ball.position,{x:50,y:-45});
-    
-  	}
 }
